@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manoop — DevOps Engineer &amp; Instructor</title>
+<meta name="description" content="Manoop — Cloud & DevOps practitioner and instructor. Azure, AKS, Docker, Kubernetes, Terraform, GitHub Actions.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F5F8; --surface:#FFFFFF; --ink:#16213A; --muted:#55617A; --line:#D5DBE5;
+  --azure:#2563C9; --pass:#1F8A4C; --run:#B7791F; --run-soft:#FBF1DE; --pass-soft:#E3F3EA;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1626; --surface:#162036; --ink:#E6EBF3; --muted:#9BA7BD; --line:#26324A;
+    --azure:#6FA3F2; --pass:#4CC283; --run:#E3AE52; --run-soft:#2E2614; --pass-soft:#12301F;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1626; --surface:#162036; --ink:#E6EBF3; --muted:#9BA7BD; --line:#26324A;
+  --azure:#6FA3F2; --pass:#4CC283; --run:#E3AE52; --run-soft:#2E2614; --pass-soft:#12301F;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1.0625rem/1.65 var(--body);-webkit-font-smoothing:antialiased}
+a{color:var(--azure);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--azure);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 1.5rem}
+
+/* nav */
+nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;gap:1rem;flex-wrap:wrap}
+nav .mark{font:700 1.15rem var(--display);color:var(--ink);text-decoration:none}
+nav ul{display:flex;gap:1.5rem;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+nav ul a{color:var(--muted);text-decoration:none;font-weight:500}
+nav ul a:hover{color:var(--ink)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:3.5rem;align-items:center;padding:4rem 0 5rem}
+.hero h1{font:800 clamp(3rem,8vw,5.75rem)/0.95 var(--display);letter-spacing:-0.035em;margin:0 0 1.5rem}
+.hero .lede{font-size:1.25rem;color:var(--muted);max-width:32ch;margin:0 0 2rem}
+.hero .lede strong{color:var(--ink);font-weight:600}
+.actions{display:flex;gap:.75rem;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;border-radius:8px;font-weight:600;text-decoration:none;border:1.5px solid var(--ink)}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.ghost{color:var(--ink)}
+.btn:hover{transform:translateY(-1px)}
+
+/* workflow run panel — the one memorable element */
+.run{background:var(--surface);border:1px solid var(--line);border-radius:12px;font-family:var(--mono);font-size:.9rem;overflow:hidden;box-shadow:0 18px 40px -24px rgba(22,33,58,.45)}
+.run-head{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1.1rem;border-bottom:1px solid var(--line);gap:1rem}
+.run-head .wf{font-weight:500}
+.run-head .trigger{color:var(--muted);font-size:.8rem}
+.badge{font-size:.75rem;padding:.2rem .6rem;border-radius:99px;background:var(--run-soft);color:var(--run);white-space:nowrap}
+.badge.done{background:var(--pass-soft);color:var(--pass)}
+.jobs{list-style:none;margin:0;padding:.5rem 0}
+.job{display:grid;grid-template-columns:1.5rem 1fr auto;align-items:center;gap:.75rem;padding:.55rem 1.1rem}
+.job .name{color:var(--ink)}
+.job .t{color:var(--muted);font-size:.8rem;min-width:3.5ch;text-align:right}
+.st{width:1.1rem;height:1.1rem;border-radius:50%;border:2px solid var(--line);position:relative}
+.job.running .st{border-color:var(--run);border-top-color:transparent;animation:spin .8s linear infinite}
+.job.passed .st{border-color:var(--pass);background:var(--pass)}
+.job.passed .st::after{content:"";position:absolute;left:.3rem;top:.12rem;width:.25rem;height:.5rem;border:solid var(--surface);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.run-foot{border-top:1px solid var(--line);padding:.75rem 1.1rem;color:var(--muted);font-size:.8rem}
+.run-foot b{color:var(--pass);font-weight:500}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* sections */
+section{padding:4.5rem 0;border-top:1px solid var(--line)}
+h2{font:700 clamp(1.9rem,4vw,2.6rem)/1.1 var(--display);letter-spacing:-0.02em;margin:0 0 .75rem}
+.intro{color:var(--muted);max-width:60ch;margin:0 0 2.5rem}
+
+.about{display:grid;grid-template-columns:1fr 1.4fr;gap:3rem}
+.about p{max-width:62ch;margin:0 0 1rem}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem}
+.facts div{border-left:3px solid var(--azure);padding-left:1rem}
+.facts strong{display:block;font:700 2rem/1 var(--display)}
+.facts span{color:var(--muted);font-size:.95rem}
+
+/* curriculum path — a real sequence, so it's numbered */
+.path{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:0;counter-reset:phase;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.path li{counter-increment:phase;padding:1.4rem 1.25rem;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.path li:nth-child(4n){border-right:0}
+.path li:nth-last-child(-n+4){border-bottom:0}
+.path li::before{content:"Phase " counter(phase);display:block;font:500 .8rem var(--mono);color:var(--azure);margin-bottom:.4rem}
+.path h3{font:700 1.2rem var(--display);margin:0 0 .35rem}
+.path p{margin:0;color:var(--muted);font-size:.93rem;line-height:1.5}
+
+/* projects */
+.projects{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
+.proj{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1.6rem}
+.proj.feature{grid-column:1/-1;display:grid;grid-template-columns:1.3fr 1fr;gap:2rem;border-color:var(--azure);border-width:1.5px}
+.proj h3{font:700 1.4rem var(--display);margin:0 0 .5rem}
+.proj.feature h3{font-size:1.9rem}
+.proj p{margin:0 0 1rem;color:var(--muted)}
+.stack{display:flex;flex-wrap:wrap;gap:.4rem;margin:0;padding:0;list-style:none}
+.stack li{font-size:.82rem;padding:.2rem .6rem;border-radius:6px;background:var(--paper);border:1px solid var(--line);color:var(--ink)}
+.services{list-style:none;margin:0;padding:0;font-family:var(--mono);font-size:.88rem}
+.services li{padding:.55rem 0;border-bottom:1px dashed var(--line);display:flex;justify-content:space-between;gap:1rem}
+.services li span:last-child{color:var(--muted)}
+
+/* teaching materials */
+.materials{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+.materials h3{font:700 1.15rem var(--display);margin:0 0 .4rem}
+.materials p{margin:0;color:var(--muted);font-size:.97rem}
+.materials .size{font:500 .82rem var(--mono);color:var(--azure);display:block;margin-bottom:.5rem}
+
+/* skills */
+.skills{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+.skills h3{font:600 1rem var(--body);margin:0 0 .6rem}
+.skills ul{list-style:none;margin:0;padding:0;color:var(--muted)}
+.skills li{padding:.15rem 0}
+
+/* contact */
+.contact{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap}
+.contact h2{font-size:clamp(2.2rem,6vw,3.8rem);max-width:14ch}
+.links{list-style:none;margin:0;padding:0;display:grid;gap:.6rem;min-width:260px}
+.links a{display:flex;justify-content:space-between;gap:1.5rem;padding:.8rem 1rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);text-decoration:none;font-weight:500}
+.links a span{color:var(--muted);font-family:var(--mono);font-size:.85rem}
+.links a:hover{border-color:var(--azure)}
+
+footer{padding:2rem 0 3rem;color:var(--muted);font-size:.88rem;border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.theme-toggle{background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:.3rem .7rem;font:inherit;cursor:pointer}
+
+@media (max-width:900px){
+  .hero,.about,.proj.feature{grid-template-columns:1fr}
+  .hero{padding-top:2rem;gap:2.5rem}
+  .path{grid-template-columns:repeat(2,1fr)}
+  .path li:nth-child(4n){border-right:1px solid var(--line)}
+  .path li:nth-child(2n){border-right:0}
+  .path li:nth-last-child(-n+4){border-bottom:1px solid var(--line)}
+  .path li:nth-last-child(-n+2){border-bottom:0}
+  .materials,.skills{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:600px){
+  .projects,.materials,.skills,.path{grid-template-columns:1fr}
+  .path li{border-right:0!important;border-bottom:1px solid var(--line)!important}
+  .path li:last-child{border-bottom:0!important}
+  .facts{grid-template-columns:1fr 1fr}
+  nav ul{gap:1rem}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .job.running .st{animation:none}
+  .btn:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <nav aria-label="Main">
+    <a class="mark" href="#top">manoop98</a>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#curriculum">Curriculum</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <div>
+      <h1>Manoop</h1>
+      <p class="lede"><strong>Cloud &amp; DevOps engineer</strong> who teaches it for a living. I build pipelines on Azure, then turn them into courses people can actually follow.</p>
+      <div class="actions">
+        <a class="btn primary" href="#projects">See my projects</a>
+        <a class="btn ghost" href="https://github.com/manoop98" target="_blank" rel="noopener">GitHub profile</a>
+      </div>
+    </div>
+
+    <div class="run" aria-label="Skills shown as a CI/CD workflow run">
+      <div class="run-head">
+        <div>
+          <div class="wf">career.yml</div>
+          <div class="trigger">on: push · main</div>
+        </div>
+        <span class="badge" id="runBadge">In progress</span>
+      </div>
+      <ol class="jobs" id="jobs">
+        <li class="job"><span class="st"></span><span class="name">linux-fundamentals</span><span class="t">—</span></li>
+        <li class="job"><span class="st"></span><span class="name">docker-build</span><span class="t">—</span></li>
+        <li class="job"><span class="st"></span><span class="name">kubernetes-deploy</span><span class="t">—</span></li>
+        <li class="job"><span class="st"></span><span class="name">azure-aks</span><span class="t">—</span></li>
+        <li class="job"><span class="st"></span><span class="name">terraform-apply</span><span class="t">—</span></li>
+        <li class="job"><span class="st"></span><span class="name">github-actions-ci</span><span class="t">—</span></li>
+      </ol>
+      <div class="run-foot" id="runFoot">Running 6 jobs…</div>
+    </div>
+  </div>
+
+  <section id="about">
+    <div class="wrap about">
+      <div>
+        <h2>About</h2>
+      </div>
+      <div>
+        <p>I'm a DevOps instructor and curriculum designer. Under the <strong>Akumenbyq</strong> training brand, I run structured batches that take students from their first Linux shell to deploying microservices on AKS through automated pipelines.</p>
+        <p>Everything I teach, I've built and broken myself first: Docker Swarm clusters on Azure VMs, Kubernetes apps on k3s and AKS, Terraform labs, and SSH-based deploy pipelines in GitHub Actions. The troubleshooting goes straight into the course material.</p>
+        <div class="facts">
+          <div><strong>93</strong><span>episodes in my Zero to Hero video series</span></div>
+          <div><strong>8</strong><span>curriculum phases, ending in a capstone</span></div>
+          <div><strong>74</strong><span>pages in my DevOps handbook</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="curriculum">
+    <div class="wrap">
+      <h2>What I teach</h2>
+      <p class="intro">The course runs in this order. Each phase builds on the last, and every phase ships something real.</p>
+      <ol class="path">
+        <li><h3>Linux</h3><p>Users, permissions, disks, networking tools, hardening.</p></li>
+        <li><h3>Git</h3><p>Branching, merging, and the workflows teams actually use.</p></li>
+        <li><h3>Docker</h3><p>Images, multi-stage builds, volumes, Compose, Swarm.</p></li>
+        <li><h3>Kubernetes</h3><p>Pods to Deployments, Services, Ingress, Helm.</p></li>
+        <li><h3>Azure</h3><p>VNet, NSG, Bastion, storage, compute, AKS.</p></li>
+        <li><h3>Terraform</h3><p>Infrastructure as code for Azure, state and modules.</p></li>
+        <li><h3>CI/CD</h3><p>GitHub Actions and Azure Pipelines, build to deploy.</p></li>
+        <li><h3>Capstone</h3><p>NexPay: all of the above in one production-style project.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="wrap">
+      <h2>Projects</h2>
+      <p class="intro">Hands-on builds I use for teaching and for my own practice.</p>
+
+      <div class="projects">
+        <article class="proj feature">
+          <div>
+            <h3>NexPay</h3>
+            <p>A fictional payment-processing SaaS built as the capstone for my whole curriculum. Four microservices, containerised, deployed to Azure, and shipped through a full CI/CD pipeline, with an architecture diagram students work from.</p>
+            <ul class="stack"><li>Azure</li><li>AKS</li><li>Docker</li><li>Terraform</li><li>GitHub Actions</li><li>Helm</li></ul>
+          </div>
+          <ul class="services" aria-label="NexPay services">
+            <li><span>Microservices</span><span>4</span></li>
+            <li><span>Curriculum phases covered</span><span>8 of 8</span></li>
+            <li><span>Cloud</span><span>Azure</span></li>
+            <li><span>Deliverable</span><span>Architecture + pipeline</span></li>
+          </ul>
+        </article>
+
+        <article class="proj">
+          <h3>FinVault Banking</h3>
+          <p>A Kubernetes learning project deployed first on k3s, then on AKS. The real-world issues I hit along the way are documented as troubleshooting guides.</p>
+          <ul class="stack"><li>Kubernetes</li><li>k3s</li><li>AKS</li></ul>
+        </article>
+
+        <article class="proj">
+          <h3>threed-demo</h3>
+          <p>A live-class demo for GitHub Actions: a two-job pipeline that builds, then deploys over SSH to an Azure VM. Comes with a 13-part course guide.</p>
+          <ul class="stack"><li>GitHub Actions</li><li>Azure VM</li><li>SSH deploy</li></ul>
+        </article>
+
+        <article class="proj">
+          <h3>ShopDock</h3>
+          <p>A complete e-commerce app packaged with Docker so students can practise builds, networking and Compose on something realistic.</p>
+          <ul class="stack"><li>Docker</li><li>Docker Compose</li></ul>
+        </article>
+
+        <article class="proj">
+          <h3>Contoso Retail on Azure</h3>
+          <p>A project series covering VNet, NSG, Bastion, compute and storage, scoped so it runs on free-tier Azure credits.</p>
+          <ul class="stack"><li>Azure</li><li>Networking</li><li>Bastion</li></ul>
+        </article>
+
+        <article class="proj">
+          <h3>Dockerised ML apps</h3>
+          <p>Containerised a RoBERTa sentiment-analysis Flask app and a YOLOv8 + InsightFace activity-detection app with lean multi-stage builds.</p>
+          <ul class="stack"><li>Docker</li><li>Flask</li><li>HuggingFace</li><li>YOLOv8</li></ul>
+        </article>
+
+        <article class="proj">
+          <h3>Docker Swarm on Azure</h3>
+          <p>Ran Swarm clusters on Ubuntu VMs in Azure, debugged real deployment failures, and wrote it up as a 17-page training handbook.</p>
+          <ul class="stack"><li>Docker Swarm</li><li>Ubuntu</li><li>Azure</li></ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="materials">
+    <div class="wrap">
+      <h2>Teaching materials</h2>
+      <p class="intro">Course assets I've written and use in class.</p>
+      <div class="materials">
+        <div><span class="size">93 episodes</span><h3>DevOps: Zero to Hero series</h3><p>Video curriculum across Linux, Docker, Kubernetes, Ansible and Terraform.</p></div>
+        <div><span class="size">74-page book</span><h3>DevOps: Zero to Hero handbook</h3><p>A companion book written with modern CLI syntax throughout.</p></div>
+        <div><span class="size">7 days</span><h3>Kubernetes Zero to Hero</h3><p>A full week-long course with docs, slides and an animated architecture diagram.</p></div>
+        <div><span class="size">5 days</span><h3>Terraform on Azure</h3><p>A module that takes students from first provider block to reusable modules.</p></div>
+        <div><span class="size">AZ-104 scope</span><h3>Azure study notes</h3><p>Identity, networking, storage, databases, security and monitoring.</p></div>
+        <div><span class="size">Per batch</span><h3>Assessment banks</h3><p>MCQ and scenario-based questions generated from each batch's curriculum.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="wrap">
+      <h2>Toolbox</h2>
+      <p class="intro">What I work with day to day.</p>
+      <div class="skills">
+        <div><h3>Cloud</h3><ul><li>Azure</li><li>AKS</li><li>Azure VNet &amp; NSG</li><li>Key Vault, Monitor</li><li>GCP (labs)</li></ul></div>
+        <div><h3>Containers</h3><ul><li>Docker</li><li>Docker Compose</li><li>Docker Swarm</li><li>Kubernetes</li><li>Helm</li></ul></div>
+        <div><h3>Automation</h3><ul><li>GitHub Actions</li><li>Azure Pipelines</li><li>Terraform</li><li>Ansible</li></ul></div>
+        <div><h3>Foundations</h3><ul><li>Linux administration</li><li>Networking</li><li>Git</li><li>Bash</li></ul></div>
+      </div>
+      <!-- EDIT: update with your exact certification status, e.g. "AZ-900 certified · AZ-104 in progress" -->
+      <p class="intro" style="margin:2.5rem 0 0">Certifications: Microsoft Azure AZ-900 / AZ-104 track.</p>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap contact">
+      <h2>Let's build something.</h2>
+      <ul class="links">
+        <li><a href="https://github.com/manoop98" target="_blank" rel="noopener">GitHub <span>manoop98</span></a></li>
+        <li><a href="https://hub.docker.com/u/manoopm" target="_blank" rel="noopener">Docker Hub <span>manoopm</span></a></li>
+        <!-- EDIT: replace with your real LinkedIn URL and email -->
+        <li><a href="https://www.linkedin.com/in/your-profile" target="_blank" rel="noopener">LinkedIn <span>/in/your-profile</span></a></li>
+        <li><a href="mailto:you@example.com">Email <span>you@example.com</span></a></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr"></span> Manoop · Deployed with GitHub Actions</span>
+    <button class="theme-toggle" id="themeBtn" type="button">Switch theme</button>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Theme toggle
+(function(){
+  const root = document.documentElement, btn = document.getElementById('themeBtn');
+  try { const s = localStorage.getItem('theme'); if (s) root.dataset.theme = s; } catch(e){}
+  btn.addEventListener('click', () => {
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark'
+      : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    try { localStorage.setItem('theme', root.dataset.theme); } catch(e){}
+  });
+})();
+
+// Workflow run: jobs pass one after another on load
+(function(){
+  const jobs = [...document.querySelectorAll('#jobs .job')];
+  const badge = document.getElementById('runBadge'), foot = document.getElementById('runFoot');
+  const times = ['12s','38s','1m 4s','52s','41s','27s'];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finish = () => {
+    badge.textContent = 'Success'; badge.classList.add('done');
+    foot.innerHTML = '<b>✓ All 6 jobs passed</b> — ready to deploy';
+  };
+  if (reduce) {
+    jobs.forEach((j,i) => { j.classList.add('passed'); j.querySelector('.t').textContent = times[i]; });
+    return finish();
+  }
+  let i = 0;
+  const step = () => {
+    if (i > 0) { const p = jobs[i-1]; p.classList.remove('running'); p.classList.add('passed'); p.querySelector('.t').textContent = times[i-1]; }
+    if (i === jobs.length) return finish();
+    jobs[i].classList.add('running'); i++;
+    setTimeout(step, 550);
+  };
+  setTimeout(step, 400);
+})();
+</script>
+</body>
+</html>
